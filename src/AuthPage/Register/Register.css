@@ -1,0 +1,32 @@
+/* .register-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    min-width: 100vw;
+}
+
+.login-link{
+    color:blue;
+}
+.col-md-6{
+    width: 34%;
+    margin-top: -20px;
+}
+.card{
+    height: 110%;
+    
+} */
+
+.register-container{
+    background-image: url('Register.jpg');
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    width: 100%;
+    background-size: cover;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,12 @@
+.startup-div {
+    
+    animation: fade 5s ease-in;
+}
+.startup-background {
+    width: 90%;
+    margin: 0 5%;
+}
+@keyframes fade {
+    0%, 100%{opacity: 0.5;}
+    50% {opacity: 1;}
+}
