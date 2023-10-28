@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { TOKEN_INFO } from '../constants/index';
-import authApi from './authApi';
+import axios from "axios";
+import { TOKEN_INFO } from "../constants/index";
+import authApi from "./authApi";
 
 // Set up default config for http requests here
 // Please have a look at here `https://github.com/axios/axios#request-config` for the full list of configs
@@ -8,9 +8,9 @@ import authApi from './authApi';
 const axiosClient = axios.create({
   // config credentials
   withCredentials: false,
-  baseURL: process.env.REACT_APP_API_URL || '',
+  baseURL: process.env.REACT_APP_API_URL || "",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -18,13 +18,21 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   function (config) {
     if (config?.headers == null) {
-      throw new Error(`Expected 'config' and 'config.headers' not to be undefined`);
+      throw new Error(
+        `Expected 'config' and 'config.headers' not to be undefined`
+      );
     }
-    const url = config.url !== undefined ? config.url : '';
+    const url = config.url !== undefined ? config.url : "";
     // console.log('api call: ', url);
-    const pathNoAuthen = ['/api/v1/auth/register', '/api/v1/auth/logout', '/api/v1/auth/authenticate'];
+    const pathNoAuthen = [
+      "/api/v1/auth/register",
+      "/api/v1/auth/logout",
+      "/api/v1/auth/authenticate",
+    ];
     if (!pathNoAuthen.includes(url)) {
-      config.headers.Authorization = `Bearer ${localStorage.getItem(TOKEN_INFO.accessToken)}`;
+      config.headers.Authorization = `Bearer ${localStorage.getItem(
+        TOKEN_INFO.accessToken
+      )}`;
     }
     // Do something before request is sent
     return config;
@@ -32,7 +40,7 @@ axiosClient.interceptors.request.use(
   async function (error) {
     // Do something with request error
     return await Promise.reject(error);
-  },
+  }
 );
 
 // Add a response interceptor
@@ -46,11 +54,12 @@ axiosClient.interceptors.response.use(
     const config = err.config;
     console.log(err);
     if (err.response != null && err.response.status === 401) {
-      console.log('ok');
+      console.log("ok");
       config._retry = true;
       try {
-        const refreshToken = localStorage.getItem(TOKEN_INFO.refreshToken) || '';
-        if (refreshToken !== '') {
+        const refreshToken =
+          localStorage.getItem(TOKEN_INFO.refreshToken) || "";
+        if (refreshToken !== "") {
           authApi.refreshToken(refreshToken);
         }
       } catch (err) {
@@ -61,7 +70,7 @@ axiosClient.interceptors.response.use(
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return await Promise.reject(err);
-  },
+  }
 );
 
 export default axiosClient;

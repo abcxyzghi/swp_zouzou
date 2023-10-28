@@ -8,8 +8,6 @@ import MainCoverImage from "./CoverImage/MainCoverImage";
 import { ROLE, TOKEN_INFO } from "./constants";
 import "./App.css";
 import Ticket from "./TicketPage/Ticket";
-import LoginComponent from "./AuthPage/Login/Login";
-import RegisterComponent from "./AuthPage/Register/Register";
 import GlobalPrivateRouter from "./privateRouter/GlobalPrivateRouter";
 import CommonPrivateRouter from "./privateRouter/CommonPrivateRouter";
 import Dashboard from "./AdminPage/Dashboard";
@@ -21,7 +19,7 @@ import DailyMeal from "./ExpertPage/DailyMeal";
 import SickMeal from "./ExpertPage/SickMeal";
 import { useEffect } from "react";
 // Import Compoent Auth
-import SignUpComponent from "./AuthPage/Register/SignIn";
+import SignUpComponent from "./AuthPage/Register/SignUp";
 import SignInComponent from "./AuthPage/Login/Login";
 function App() {
   // Bậc cao nhất, khi thoát trình duyệt ở bất kì route nào thì cũng sẽ removeItem ở localStorage
@@ -52,7 +50,7 @@ function App() {
             {/* private router with role ADMIN */}
             <Route element={<CommonPrivateRouter targetRole={ROLE.ADMIN} />}>
               <Route path="/admin">
-                <Route path="" element={<Dashboard />} />
+                <Route path="" element={<Admin />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="staff-manager" element={<StaffManager />} />
                 <Route path="cages" element={<Cage />} />

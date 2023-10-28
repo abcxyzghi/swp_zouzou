@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { ROLE, TOKEN_INFO } from "../../constants";
 import authApi from "../../api/authApi";
 import jwtDecode from "jwt-decode";
-import { setAuth, resetIntialState } from "../../slices/authSlice";
-import { useForm } from "react-hook-form";
-import store from "../../reduxStore/store";
+import { setAuth } from "../../slices/authSlice";
 // Chakra imports
 import {
   Box,
@@ -24,23 +22,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-
-export default function SignInComponent() {
-  const toast = useToast();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  // Chakra color mode
-  const textColor = useColorModeValue("gray.700", "white");
-  const bgForm = useColorModeValue("white", "navy.800");
-  const titleColor = useColorModeValue("gray.700", "blue.500");
-  const bgIcons = useColorModeValue("black");
-  const bgIconsHover = useColorModeValue("gray.50", "whiteAlpha.100");
-
+function SignUpComponent() {
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
+      confirm_password: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -49,12 +36,25 @@ export default function SignInComponent() {
       password: Yup.string()
         .min(5, "Tối thiểu 5 kí tự")
         .required("Bắt buộc nhập"),
+      confirm_password: Yup.string()
+        .oneOf([Yup.ref("password")], "Mật khẩu không khớp")
+        .required("Bắt buộc nhập"),
     }),
     onSubmit: async (values) => {
       try {
-        const response = await authApi.login(values);
+        const response = await authApi.signUp(values);
+        console.log(response);
         if (response) {
+          // 200 OK: Yêu cầu đã thành công.
           localStorage.setItem("email", values.email);
+          toast({
+            title: "Đăng ký.",
+            description: "Đăng ký thàng công",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
           localStorage.setItem(TOKEN_INFO.accessToken, response.accessToken);
           localStorage.setItem(TOKEN_INFO.refreshToken, response.refreshToken);
           var decoded = jwtDecode(response.accessToken);
@@ -70,7 +70,7 @@ export default function SignInComponent() {
               return;
             }
             case ROLE.USER: {
-              navigate("/App1");
+              navigate("/");
               return;
             }
             case ROLE.EXPERT: {
@@ -78,33 +78,37 @@ export default function SignInComponent() {
               return;
             }
           }
+        } else {
+          toast({
+            title: "Đăng ký.",
+            description: "Tài khoản đã tồn tại, xin mời bạn thử lại",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
         }
       } catch (error) {
-        console.log(error);
         toast({
+          title: "Đăng ký.",
+          description: "Tài khoản đã tồn tại, xin mời bạn thử lại",
           status: "error",
-          position: "top",
-          duration: "5000",
+          duration: 5000,
           isClosable: true,
-          title: "Đăng nhập",
-          description: "Đăng nhập không thành công",
+          position: "top",
         });
       }
     },
   });
-  // Chekc isExit === false;
-  if (store.getState().auth?.isExit) {
-    toast({
-      status: "success",
-      position: "top",
-      duration: "5000",
-      isClosable: true,
-      title: "Đăng xuất tài khoản",
-      description: "Đăng xuất thành công",
-    });
-    dispatch(resetIntialState());
-  }
-
+  const toast = useToast();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // Chakra color mode
+  const textColor = useColorModeValue("gray.700", "white");
+  const bgForm = useColorModeValue("white", "navy.800");
+  const titleColor = useColorModeValue("gray.700", "blue.500");
+  const bgIcons = useColorModeValue("black");
+  const bgIconsHover = useColorModeValue("gray.50", "whiteAlpha.100");
   return (
     <Flex position="relative" height={"100vh"}>
       <Flex
@@ -145,7 +149,7 @@ export default function SignInComponent() {
               textAlign="center"
               mb="22px"
             >
-              ĐĂNG NHẬP TÀI KHOẢN
+              ĐĂNG KÍ TÀI KHOẢN
             </Text>
             <HStack spacing="15px" justify="center" mb="22px">
               <Flex
@@ -160,11 +164,12 @@ export default function SignInComponent() {
                 bg={bgIcons}
                 _hover={{ bg: bgIconsHover }}
               >
-                <Link to="/">
+                <Link href="#">
                   <img src={logo} alt="Logo" />
                 </Link>
               </Flex>
             </HStack>
+
             <form onSubmit={formik.handleSubmit}>
               <FormControl>
                 <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
@@ -189,7 +194,6 @@ export default function SignInComponent() {
                   Mật khẩu
                 </FormLabel>
                 <Input
-                  id="password"
                   variant="auth"
                   fontSize="sm"
                   ms="4px"
@@ -204,6 +208,29 @@ export default function SignInComponent() {
                 {formik.errors.password && formik.touched.password && (
                   <p style={{ color: "red" }}>{formik.errors.password}</p>
                 )}
+                {/* Nhập lại mật khẩu */}
+                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                  Nhập lại mật khẩu
+                </FormLabel>
+                <Input
+                  variant="auth"
+                  fontSize="sm"
+                  ms="4px"
+                  type="password"
+                  placeholder="Nhập lại mật khẩu của bạn"
+                  mb="20px"
+                  size="lg"
+                  name="confirm_password"
+                  value={formik.values.confirm_password}
+                  onChange={formik.handleChange}
+                />
+                {formik.errors.confirm_password &&
+                  formik.touched.confirm_password && (
+                    <p style={{ color: "red" }}>
+                      {formik.errors.confirm_password}
+                    </p>
+                  )}
+                {/* Nhập lại mật khẩu */}
                 <Button
                   type="submit"
                   fontSize="13px"
@@ -212,7 +239,7 @@ export default function SignInComponent() {
                   h="50"
                   mb="24px"
                 >
-                  ĐĂNG NHẬP
+                  ĐĂNG KÍ
                 </Button>
               </FormControl>
             </form>
@@ -224,9 +251,9 @@ export default function SignInComponent() {
               mt="0px"
             >
               <Text color={textColor} fontWeight="medium">
-                Bạn vẫn chưa có tài khoản?{" "}
-                <Link color={titleColor} fontWeight="bold" to="/register">
-                  Đăng kí ngay
+                Bạn đã có tài khoản?{" "}
+                <Link color={titleColor} fontWeight="bold" to="/login">
+                  Đăng nhập ngay
                 </Link>
               </Text>
             </Flex>
@@ -247,3 +274,5 @@ export default function SignInComponent() {
     </Flex>
   );
 }
+
+export default SignUpComponent;
