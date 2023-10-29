@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import cageApi from "../api/cageApi";
+import { useNavigate } from "react-router-dom";
 
 const DailyMeal = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // URL của API bạn muốn gửi yêu cầu GET
-    const apiUrl = "https://zouzoumanagement.xyz/api/v3/cage/dc@gmail.com";
-
     // Gửi yêu cầu GET đến API sử dụng Axios
-    axios.get(apiUrl)
+
+    cageApi
+      .getCageExpert()
       .then((response) => {
         // Lấy dữ liệu từ phản hồi API
-        const apiData = response.data;
+        const apiData = response;
 
         setData(apiData);
       })
@@ -32,17 +34,17 @@ const DailyMeal = () => {
 
   return (
     <div>
-      <h1>Cage</h1>
+      <h1>Daily Meal</h1>
       <table>
         <thead>
           <tr>
             <th>ID</th>
             <th>Name</th>
-            
+
             <th>Cage Status</th>
             <th>Cage Type</th>
             <th>Area Name</th>
-           
+
             <th>Actions</th>
           </tr>
         </thead>
@@ -51,13 +53,23 @@ const DailyMeal = () => {
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.name}</td>
-              
+
               <td>{item.cageStatus}</td>
               <td>{item.cageType}</td>
               <td>{item.areaName}</td>
-              
+
               <td>
-                <button onClick={() => handleViewDetail(item)}>Xem chi tiết</button>
+                <button onClick={() => handleViewDetail(item)}>
+                  View Detail
+                </button>
+                <button
+                  onClick={() => {
+                    navigate(`/expert/daily-meal/${item.id}/food`);
+                  }}
+                  style={{ marginLeft: "12px" }}
+                >
+                  Create Meal
+                </button>
               </td>
             </tr>
           ))}
@@ -82,4 +94,3 @@ const DailyMeal = () => {
 };
 
 export default DailyMeal;
-  

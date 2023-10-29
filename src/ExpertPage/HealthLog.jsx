@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import cageApi from "../api/cageApi";
-import { useNavigate } from "react-router-dom";
+import logApi from "../api/logApi";
 
-const SickMeal = () => {
+const HealthLog = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Gửi yêu cầu GET đến API sử dụng Axios
-    cageApi
-      .getCageExpert()
+    logApi
+      .getLogExpert()
       .then((response) => {
         // Lấy dữ liệu từ phản hồi API
         const apiData = response;
@@ -33,24 +31,21 @@ const SickMeal = () => {
 
   return (
     <div>
-      <h1>Sick meal</h1>
+      <h1>Health Log</h1>
       <table>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
 
-            <th>Cage Status</th>
-            <th>Cage Type</th>
-            <th>Area Name</th>
-
-            <th>Actions</th>
+            <th>Species</th>
+            <th>Description</th>
+            <th>Date time</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item) => (
             <tr key={item.id}>
-              <td>{item.id}</td>
+              {/* <td>{item.id}</td>
               <td>{item.name}</td>
 
               <td>{item.cageStatus}</td>
@@ -59,17 +54,9 @@ const SickMeal = () => {
 
               <td>
                 <button onClick={() => handleViewDetail(item)}>
-                  View Detail
+                  Xem chi tiết
                 </button>
-                <button
-                  onClick={() => {
-                    navigate(`/expert/sick-meal/${item.id}/food`);
-                  }}
-                  style={{ marginLeft: "12px" }}
-                >
-                  Create Meal
-                </button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
@@ -92,4 +79,4 @@ const SickMeal = () => {
   );
 };
 
-export default SickMeal;
+export default HealthLog;

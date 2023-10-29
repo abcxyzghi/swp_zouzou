@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import App1 from "./Component/App1";
 import Admin from "./AdminPage/Admin"; // Import trang Admin
 import Staff from "./StaffPage/Staff";
@@ -23,6 +28,10 @@ import { useEffect } from "react";
 // Import Compoent Auth
 import SignUpComponent from "./AuthPage/Register/SignIn";
 import SignInComponent from "./AuthPage/Login/Login";
+import HealthLog from "./ExpertPage/HealthLog";
+import FoodStore from "./ExpertPage/FoodStore/FoodStore";
+import UpdateFood from "./ExpertPage/UpdateFood/UpdateFood";
+import FoodStorage from "./FoodStorage/FoodStorage";
 function App() {
   // Bậc cao nhất, khi thoát trình duyệt ở bất kì route nào thì cũng sẽ removeItem ở localStorage
   // useEffect(() => {
@@ -68,10 +77,21 @@ function App() {
             </Route>
             {/* private router with role EXPERT */}
             <Route element={<CommonPrivateRouter targetRole={ROLE.EXPERT} />}>
-              <Route path="/expert">
-                <Route path="" element={<Expert />} />
+              <Route path="/expert" element={<Expert />}>
+                <Route
+                  path=""
+                  element={<Navigate to="/expert/health-log" replace />}
+                />
+                <Route path="health-log" element={<HealthLog />} />
+                <Route path="food-storage" element={<FoodStorage />} />
                 <Route path="daily-meal" element={<DailyMeal />} />
                 <Route path="sick-meal" element={<SickMeal />} />
+                <Route path="sick-meal/:cageId/food" element={<FoodStore />} />
+                <Route path="daily-meal/:cageId/food" element={<FoodStore />} />
+                <Route
+                  path="daily-meal/:cageId/update-food"
+                  element={<UpdateFood />}
+                />
               </Route>
             </Route>
           </Route>
