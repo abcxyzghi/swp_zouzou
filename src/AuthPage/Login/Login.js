@@ -59,6 +59,7 @@ export default function SignInComponent() {
           localStorage.setItem(TOKEN_INFO.refreshToken, response.refreshToken);
           var decoded = jwtDecode(response.accessToken);
           const role = decoded.authorities[0].authority;
+          localStorage.setItem("role", role);
           dispatch(setAuth({ isLogin: true }));
           switch (role) {
             case ROLE.ADMIN: {
