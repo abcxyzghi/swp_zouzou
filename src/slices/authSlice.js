@@ -31,6 +31,7 @@ const authSlice = createSlice({
       localStorage.removeItem("email");
       localStorage.removeItem(TOKEN_INFO.accessToken);
       localStorage.removeItem(TOKEN_INFO.refreshToken);
+      localStorage.removeItem("role");
 
       return {
         initialState,
